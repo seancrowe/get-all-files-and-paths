@@ -6,7 +6,7 @@ const fs = require("fs");
 // Replace with the proper values
 // const ENVIRONMENT = "your-environment";
 // const API_KEY = "your-apikey";
-const ENVIRONMENT = "your environment name";
+const ENVIRONMENT = "your environment";
 const API_KEY = "your api key";
 const baseFolderUrl = `https://${ENVIRONMENT}.chili-publish.online/rest-api/v1.2/resources/Assets/treelevel`;
 const baseFileUrl = `https://${ENVIRONMENT}.chili-publish.online/rest-api/v1.2/resources/Assets/sorted`;
@@ -180,12 +180,8 @@ async function exploreAndFetchFiles() {
         nextPage = newNextPage;
         allFiles.push(...files);
         saveState(queue, allFiles, nextPage);
-        await delay(300);
+        await delay();
       }
-
-      // Fetch subfolders and add them to the queue
-      const subfolders = await fetchSubfolders(currentPath);
-      queue.push(...subfolders);
 
       queue.shift();
 
