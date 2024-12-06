@@ -55,68 +55,6 @@ function loadState() {
   return { queue: [""], allFiles: [], currentPage: 1 }; // Default initial state
 }
 
-/**
- * Fetch subfolders from a given folder path
- * @param {string} currentPath The path to query
- * @returns {Promise<Array>} List of discovered subfolder IDs
- */
-async function fetchSubfolders(currentPath) {
-  const url = `${baseFolderUrl}?parentFolder=${encodeURIComponent(currentPath)}&numLevels=1&includeSubDirectories=true&includeFiles=false`;
-  console.log(`Requesting subfolders: ${url}`);
-  const response = await axios.get(url, { headers: { "api-key": API_KEY } });
-
-  // Parse the XML response
-  const result = await parseStringPromise(response.data);
-
-  const tree = result.tree?.item || [];
-  const subfolders = tree
-    .filter((item) => item.$.isFolder === "true")
-    .map((item) => item.$.id);
-
-  return subfolders;
-}
-
-/**
- * Fetch files from a given folder, paginating if necessary
- * @param {string} currentPath The path to query
- * @returns {Promise<Array>} List of file objects { name, id, relativePath, fileSize }
- */
-// async function fetchFiles(currentPath, allFiles) {
-//   const files = [];
-//   let currentPage = 1;
-//
-//   while (true) {
-//     const url = `${baseFileUrl}?parentFolderPath=${encodeURIComponent(
-//       currentPath
-//     )}&includeSubDirectories=false&pageSize=100&pageNum=${currentPage}`;
-//     console.log(`Requesting files: ${url}`);
-//     const response = await axios.get(url, { headers: { "api-key": API_KEY } });
-//
-//     // Parse the XML response
-//     const result = await parseStringPromise(response.data);
-//     const searchResults = result.searchresults || {};
-//     const items = searchResults.item || [];
-//
-//     // Extract file information
-//     for (const item of items) {
-//       files.push({
-//         name: item.$.name,
-//         id: item.$.id,
-//         relativePath: item.$.relativePath,
-//         fileSize: item.fileInfo[0].$.fileSize,
-//       });
-//     }
-//
-//     // Check if we need to paginate
-//     const numPages = parseInt(searchResults.$.numPages, 10);
-//     if (currentPage >= numPages) break;
-//
-//     currentPage++;
-//   }
-//
-//   return files;
-// }
-
 async function fetchFilesOnPage(currentPath, currentPage) {
   const files = [];
 
